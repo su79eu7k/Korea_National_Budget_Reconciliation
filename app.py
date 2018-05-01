@@ -153,6 +153,7 @@ scope = ScopeControl(2018)
 
 # App
 app = dash.Dash()
+server = app.server  # Flask app for deployment.
 
 # Append an externally hosted CSS stylesheet
 # app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
@@ -413,4 +414,4 @@ def generate_figure_sankey(year):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run(host='0.0.0.0')
