@@ -5,7 +5,6 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly as py
 import plotly.graph_objs as go
 
 
@@ -161,14 +160,25 @@ server = app.server  # Flask app for deployment.
 # app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 
 app.layout = html.Div([
-                html.Div(
+                html.H1('대한민국 정부 예산 대사', style={'textAlign': 'center', 'color': 'gray'}),
+                html.H2('(Korean government budget reconciliation)', style={'textAlign': 'center', 'color': 'gray'}),
+
+                html.Div([
+                    html.H3('원 데이터 메타 정보'),
+                    html.P('자료출처: 디지털예산회계시스템(http://www.openfiscaldata.go.kr/)'),
+                    html.P('이용허락조건: 출처표시-변경금지')
+                ], style={'color': 'gray', 'marginTop': '5%', 'marginRight': '10%', 'marginBottom': '5%', 'marginLeft': '10%'}),
+
+                html.Div([
+                    html.H3('대상연도', style={'textAlign': 'center', 'color': 'gray'}),
                     dcc.Dropdown(
                         id='scope_selection',
                         options=[{'label': '{}'.format(y), 'value': y} for y in range(2007, 2019)],
                         value=2018,
-                    ), style={'margin-left': '3%', 'margin-right': '3%'}),
+                    )
+                ], style={'marginTop': '5%', 'marginRight': '45%', 'marginBottom': '5%', 'marginLeft': '45%', }),
 
-                # In
+                # Pie
                 html.Div([
                     html.Div(
                         dcc.Graph(
@@ -179,16 +189,25 @@ app.layout = html.Div([
                         dcc.Graph(
                             id='figure_out_pie',
                         ), style={'width': '50%', 'display': 'inline-block'}),
-                ], style={'margin-left': '3%', 'margin-right': '3%'}),
+                ], style={'marginTop': '5%', 'marginRight': '3%', 'marginLeft': '3%'}),
 
-                # Out
+                html.Div([
+                    html.H3('분류체계'),
+                    html.P('분야: 정부 기능분류의 기본 틀 (예: 농림해양수산)'),
+                    html.P('부문: 정부 업무 분류의 기본 틀 (예: 해양수산·어촌)'),
+                    html.P('프로그램: 국가의 최소 정책단위로서 동일한 정책목표를 달성하기 위한 한 개 이상의 단위사업으로 구성 (예: 수산물 유통 및 안전관리)'),
+                    html.P('단위사업: 프로그램 달성을 위한 수단으로서 세부사업군(群)으로 구성 (예: 수산물 가격 안정)'),
+                ], style={'color': 'gray', 'marginTop': '5%', 'marginRight': '10%', 'marginBottom': '5%', 'marginLeft': '10%'}),
+
+
+                # Bar
                 html.Div([
                     html.Div(
                         dcc.Graph(
                             id='figure_bar',
                             hoverData={'points': [{'x': '교육'}]},
                         ), style={}),
-                ], style={'margin-left': '3%', 'margin-right': '3%'}),
+                ], style={'marginTop': '5%', 'marginRight': '3%', 'marginLeft': '3%'}),
 
                 html.Div([
                     html.Div(
@@ -197,17 +216,19 @@ app.layout = html.Div([
                             hoverData={'points': [{'x': '고등교육'}]},
                         ), style={'width': '35%', 'display': 'inline-block'}
                     ),
+
                     html.Div(
                         dcc.Graph(
                             id='figure_out_bar_d2',
                         ), style={'width': '65%', 'display': 'inline-block'}
                     ),
-                ], style={'margin-left': '3%', 'margin-right': '3%'}),
+                ], style={'marginRight': '3%', 'marginLeft': '3%'}),
 
+                # Sankey
                 html.Div(
                     dcc.Graph(
                         id='figure_sankey',
-                    )
+                    ), style={'marginTop': '5%'}
                 ),
             ])
 
@@ -389,8 +410,6 @@ def generate_figure_sankey(year):
                 domain={'x': [0, 1], 'y': [0, 1]},
                 orientation='h',
                 textfont={'size': 10},
-                valueformat=',.2f',
-                valuesuffix=' 억원',
                 arrangement='freeform',
                 node=dict(
                     pad=12,
