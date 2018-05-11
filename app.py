@@ -61,6 +61,8 @@ df_net_out = pd.concat(frames_net_out, axis=0)
 df_in = pd.concat(frames_in, axis=0)
 df_out = pd.concat(frames_out, axis=0)
 
+# Typo correction
+df_net_out = df_net_out.rename({'부분명': '부문명'}, axis='columns')
 
 class ScopeControl:
     def __init__(self, year):
@@ -73,19 +75,19 @@ class ScopeControl:
         self.df_oscope = df_out[df_out['회계연도'] == self.year]
 
     def gen_bar_data(self):
-        self.df_obar = self.df_net_oscope[['분야명', '부문명', '프로그램명', '전년도당초금액(천원)', '금년도정부안(천원)']].sort_values('금년도정부안(천원)', ascending=False)
-        self.df_obar[['전년도당초금액(천원)', '금년도정부안(천원)']] = self.df_obar[['전년도당초금액(천원)', '금년도정부안(천원)']]
+        self.df_obar = self.df_net_oscope[['분야명', '부문명', '프로그램명', '전년도당초금액(천원)', '금년도국회확정(천원)']].sort_values('금년도국회확정(천원)', ascending=False)
+        self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']] = self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']]
 
     def gen_pie_data(self):
-        _ipie = self.df_net_iscope[['수입항명', '금년도정부안(천원)']].groupby('수입항명', as_index=False).sum().sort_values('금년도정부안(천원)', ascending=False)
+        _ipie = self.df_net_iscope[['수입항명', '금년도국회확정(천원)']].groupby('수입항명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
         _ipie.iloc[9:, 0] = '기타'
-        self.df_ipie = _ipie.groupby('수입항명', as_index=False).sum().sort_values('금년도정부안(천원)', ascending=False)
-        self.df_ipie['금년도정부안(천원)'] = self.df_ipie['금년도정부안(천원)']
+        self.df_ipie = _ipie.groupby('수입항명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
+        self.df_ipie['금년도국회확정(천원)'] = self.df_ipie['금년도국회확정(천원)']
 
-        _opie = self.df_net_oscope[['분야명', '금년도정부안(천원)']].groupby('분야명', as_index=False).sum().sort_values('금년도정부안(천원)', ascending=False)
+        _opie = self.df_net_oscope[['분야명', '금년도국회확정(천원)']].groupby('분야명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
         _opie.iloc[9:, 0] = '기타'
-        self.df_opie = _opie.groupby('분야명', as_index=False).sum().sort_values('금년도정부안(천원)', ascending=False)
-        self.df_opie['금년도정부안(천원)'] = self.df_opie['금년도정부안(천원)']
+        self.df_opie = _opie.groupby('분야명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
+        self.df_opie['금년도국회확정(천원)'] = self.df_opie['금년도국회확정(천원)']
 
     def gen_sankey_data(self):
         df_iflow_1 = self.df_iscope.groupby(['수입항명', '수입관명'], as_index=False)['금년도예산(천원)'].sum()
@@ -224,7 +226,7 @@ def generate_figure_in_pie(year):
                 hole=.3,
                 marker=dict(colors=pie_color, line=dict(color='white', width=2)),
                 labels=scope.df_ipie['수입항명'],
-                values=scope.df_ipie['금년도정부안(천원)'],
+                values=scope.df_ipie['금년도국회확정(천원)'],
                 textposition='inside',
             )
         ],
@@ -249,7 +251,7 @@ def generate_figure_out_pie(year):
                 hole=.3,
                 marker=dict(colors=pie_color, line=dict(color='white', width=2)),
                 labels=scope.df_opie['분야명'],
-                values=scope.df_opie['금년도정부안(천원)'],
+                values=scope.df_opie['금년도국회확정(천원)'],
                 textposition='inside',
             )
         ],
@@ -269,7 +271,7 @@ def generate_figure_bar(year):
     scope.gen_bar_data()
 
     d_ly = scope.df_obar[['분야명', '전년도당초금액(천원)']].groupby('분야명', as_index=False).sum()
-    d_cy = scope.df_obar[['분야명', '금년도정부안(천원)']].groupby('분야명', as_index=False).sum()
+    d_cy = scope.df_obar[['분야명', '금년도국회확정(천원)']].groupby('분야명', as_index=False).sum()
 
     return {
         'data': [
@@ -281,7 +283,7 @@ def generate_figure_bar(year):
             ),
             go.Bar(
                 x=d_cy['분야명'],
-                y=d_cy['금년도정부안(천원)'],
+                y=d_cy['금년도국회확정(천원)'],
                 name='기준연도',
                 marker=dict(color=bar_color_current),
             )
@@ -305,9 +307,9 @@ def generate_figure_out_bar_d1(year, hoverData):
     scope.gen_bar_data()
 
     h = hoverData['points'][0]['x']
-    d = scope.df_obar.loc[scope.df_obar['분야명'] == h, ['부문명', '전년도당초금액(천원)', '금년도정부안(천원)']]
+    d = scope.df_obar.loc[scope.df_obar['분야명'] == h, ['부문명', '전년도당초금액(천원)', '금년도국회확정(천원)']]
     d_ly = d[['부문명', '전년도당초금액(천원)']].groupby('부문명', as_index=False).sum()
-    d_cy = d[['부문명', '금년도정부안(천원)']].groupby('부문명', as_index=False).sum()
+    d_cy = d[['부문명', '금년도국회확정(천원)']].groupby('부문명', as_index=False).sum()
 
     return {
         'data': [
@@ -319,7 +321,7 @@ def generate_figure_out_bar_d1(year, hoverData):
             ),
             go.Bar(
                 x=d_cy['부문명'],
-                y=d_cy['금년도정부안(천원)'],
+                y=d_cy['금년도국회확정(천원)'],
                 name='기준연도',
                 marker=dict(color=bar_color_current),
             ),
@@ -343,9 +345,9 @@ def generate_figure_out_bar_d2(year, hoverData):
     scope.gen_bar_data()
 
     h = hoverData['points'][0]['x']
-    d = scope.df_obar.loc[scope.df_obar['부문명'] == h, ['프로그램명', '전년도당초금액(천원)', '금년도정부안(천원)']]
+    d = scope.df_obar.loc[scope.df_obar['부문명'] == h, ['프로그램명', '전년도당초금액(천원)', '금년도국회확정(천원)']]
     d_ly = d[['프로그램명', '전년도당초금액(천원)']].groupby('프로그램명', as_index=False).sum()
-    d_cy = d[['프로그램명', '금년도정부안(천원)']].groupby('프로그램명', as_index=False).sum()
+    d_cy = d[['프로그램명', '금년도국회확정(천원)']].groupby('프로그램명', as_index=False).sum()
 
     return {
         'data': [
@@ -357,7 +359,7 @@ def generate_figure_out_bar_d2(year, hoverData):
             ),
             go.Bar(
                 x=d_cy['프로그램명'],
-                y=d_cy['금년도정부안(천원)'],
+                y=d_cy['금년도국회확정(천원)'],
                 name='기준연도',
                 marker=dict(color=bar_color_current),
             ),
@@ -414,4 +416,4 @@ def generate_figure_sankey(year):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run_server(host='127.0.0.1')
