@@ -75,18 +75,18 @@ class ScopeControl:
 
     def gen_bar_data(self):
         self.df_obar = self.df_net_oscope[['분야명', '부문명', '프로그램명', '전년도당초금액(천원)', '금년도국회확정(천원)']].sort_values('금년도국회확정(천원)', ascending=False)
-        self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']] = self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']]
+        self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']] = self.df_obar[['전년도당초금액(천원)', '금년도국회확정(천원)']] / 1e5
 
     def gen_pie_data(self):
         _ipie = self.df_net_iscope[['수입항명', '금년도국회확정(천원)']].groupby('수입항명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
         _ipie.iloc[9:, 0] = '기타'
         self.df_ipie = _ipie.groupby('수입항명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
-        self.df_ipie['금년도국회확정(천원)'] = self.df_ipie['금년도국회확정(천원)']
+        self.df_ipie['금년도국회확정(천원)'] = self.df_ipie['금년도국회확정(천원)'] / 1e5
 
         _opie = self.df_net_oscope[['분야명', '금년도국회확정(천원)']].groupby('분야명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
         _opie.iloc[9:, 0] = '기타'
         self.df_opie = _opie.groupby('분야명', as_index=False).sum().sort_values('금년도국회확정(천원)', ascending=False)
-        self.df_opie['금년도국회확정(천원)'] = self.df_opie['금년도국회확정(천원)']
+        self.df_opie['금년도국회확정(천원)'] = self.df_opie['금년도국회확정(천원)'] / 1e5
 
     def gen_sankey_data(self):
         df_iflow_1 = self.df_iscope.groupby(['수입항명', '수입관명'], as_index=False)['금년도예산(천원)'].sum()
@@ -142,7 +142,7 @@ class ScopeControl:
             .reset_index(drop=True)
 
         self.value = (pd.concat([df_iflow_1['금년도예산(천원)'], df_iflow_2['금년도예산(천원)'], df_iflow_3['금년도예산(천원)'],
-                                 df_oflow_1['금년도예산(천원)'], df_oflow_2['금년도예산(천원)'], df_oflow_3['금년도예산(천원)']]) / 10e4)\
+                                 df_oflow_1['금년도예산(천원)'], df_oflow_2['금년도예산(천원)'], df_oflow_3['금년도예산(천원)']]) / 1e5)\
             .reset_index(drop=True)
 
         self.color = pd.concat([df_iflow_1['line_color'], df_iflow_2['line_color'], df_iflow_3['line_color'],
@@ -199,7 +199,6 @@ app.layout = html.Div([
                     html.P('단위사업: 프로그램 달성을 위한 수단으로서 세부사업군(群)으로 구성 (예: 수산물 가격 안정)'),
                 ], style={'color': 'gray', 'marginTop': '5%', 'marginRight': '10%', 'marginBottom': '5%', 'marginLeft': '10%'}),
 
-
                 # Bar
                 html.Div([
                     html.Div(
@@ -253,7 +252,7 @@ def generate_figure_in_pie(year):
         ],
 
         'layout': {
-            'title': '{} 세입 예산 구성'.format(scope.year),
+            'title': '{} 세입 예산 구성(억원)'.format(scope.year),
         }
     }
 
@@ -278,7 +277,7 @@ def generate_figure_out_pie(year):
         ],
 
         'layout': {
-            'title': '{} 세출 예산 구성'.format(scope.year),
+            'title': '{} 세출 예산 구성(억원)'.format(scope.year),
         }
     }
 
@@ -311,7 +310,7 @@ def generate_figure_bar(year):
         ],
 
         'layout': {
-            'title': '{} 세출 예산 상세(전년대비)'.format(scope.year),
+            'title': '{} 세출 예산 상세(억원)'.format(scope.year),
             'xaxis': dict(showgrid=False),
             'yaxis': dict(showgrid=False),
             'showlegend': False,
@@ -428,7 +427,7 @@ def generate_figure_sankey(year):
             ],
 
         'layout': {
-            'title': '{} 정부 세입/세출 예산편성현황'.format(scope.year),
+            'title': '{} 정부 세입/세출 예산편성현황(억원)'.format(scope.year),
             'height': 2048
             }
         }
