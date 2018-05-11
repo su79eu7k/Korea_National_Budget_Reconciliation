@@ -63,6 +63,7 @@ df_out = pd.concat(frames_out, axis=0)
 # Typo correction
 df_net_out = df_net_out.rename({'부분명': '부문명'}, axis='columns')
 
+
 class ScopeControl:
     def __init__(self, year):
         self.year = year
@@ -434,4 +435,5 @@ def generate_figure_sankey(year):
 
 
 if __name__ == '__main__':
-    app.run_server(host='127.0.0.1')
+    app.run(host='0.0.0.0')
+    # app.run_server(host='127.0.0.1')
