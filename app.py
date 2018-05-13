@@ -165,9 +165,9 @@ app.layout = html.Div([
                 html.H2('(Korean government budget reconciliation)', style={'textAlign': 'center', 'color': 'gray'}),
 
                 html.Div([
-                    html.H3('원 데이터 메타 정보'),
+                    html.H3('메타 정보'),
                     html.P('자료출처: 디지털예산회계시스템(http://www.openfiscaldata.go.kr/)'),
-                    html.P('이용허락조건: 출처표시-변경금지')
+                    html.P('원 데이터 이용허락조건: 출처표시-변경금지')
                 ], style={'color': 'gray', 'marginTop': '5%', 'marginRight': '10%', 'marginBottom': '5%', 'marginLeft': '10%'}),
 
                 html.Div([
@@ -311,7 +311,7 @@ def generate_figure_bar(year):
         ],
 
         'layout': {
-            'title': '{} 세출 예산 상세(억원)'.format(scope.year),
+            'title': '{} 세출 예산 분야별/부문별/프로그램별 상세(억원)'.format(scope.year),
             'xaxis': dict(showgrid=False),
             'yaxis': dict(showgrid=False),
             'showlegend': False,
