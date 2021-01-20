@@ -7,8 +7,6 @@ This is one of my side project to learn how to build interactive dash board usin
 Every raw data used here is from Open Fiscal Data Korea(http://www.openfiscaldata.go.kr/) under it's license.
 
 ## DEMO
-### Online DEMO
-http://nbrecon.advanced-business-analytics.com/
 
 ### Screenshot
 ![DEMO](https://github.com/su79eu7k/Korea_National_Budget_Reconciliation/blob/master/demo.png?raw=true)
